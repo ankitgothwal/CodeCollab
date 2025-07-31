@@ -26,8 +26,10 @@ function CodeScreen() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userName) navigate(`/?roomId=${roomId}`);
-  }, []);
+  if (typeof userName === "undefined") return; // wait until userName is resolved
+  if (!userName) navigate(`/?roomId=${roomId}`);
+}, [userName, roomId, navigate]);
+
 
   const [output, setOutput] = useState("");
   const [messages, setMessages] = useState([]);

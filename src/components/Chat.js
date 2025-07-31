@@ -33,21 +33,24 @@ const Chat = ({ socketRef, roomId, messages, setMessages }) => {
         ref={divRef}
         className="w-full flex flex-col h-fit relative overflow-y-scroll"
       >
-        {messages?.map((message, index) => {
-          return message.type === "message" ? (
-            <ChatBubble
-              key={index}
-              message={message.message}
-              username={message.username}
-              time={message.time}
-              self={message.username === "me"}
-            />
-          ) : (
-            <span className="text-primary text-xs bg-foreground py-2 px-4 self-center rounded-full mt-2 w-fit">
-              {message.message}
-            </span>
-          );
-        })}
+       {messages?.map((message, index) => {
+        return message.type === "message" ? (
+          <ChatBubble
+            key={index}
+            message={message.message}
+            username={message.username}
+            time={message.time}
+            self={message.username === "me"}
+          />
+        ) : (
+          <span
+            key={index}  // ✅ Add key here too!
+            className="text-primary text-xs bg-foreground py-2 px-4 self-center rounded-full mt-2 w-fit"
+          >
+            {message.message}
+          </span>
+        );
+      })}
       </div>
       <div className="p-2 absolute bottom-0 left-0 w-full flex gap-2">
         <div className="w-full bg-foreground overflow-hidden flex items-center px-2 rounded-full h-10">

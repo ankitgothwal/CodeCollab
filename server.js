@@ -5,24 +5,36 @@ const { Server } = require("socket.io");
 const USER = require("./src/utils/constants/user");
 const CODE = require("./src/utils/constants/code");
 const path = require("path");
+const cors = require("cors");
+const dotenv = require("dotenv");
 
+// ✅ Load .env variables
+dotenv.config();
+
+// ✅ Enable CORS for development & deployment
+app.use(cors());
+
+// ✅ Create HTTP server and attach Socket.IO
 const server = http.createServer(app);
-
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*", // Change to frontend URL in production
     methods: ["GET", "POST"]
   }
 });
 
+// ✅ Serve React build folder
+app.use(express.static(path.join(__dirname, "build")));
 
-app.use(express.static("build"));
-app.use((req, res, next) => {
+// ✅ Serve index.html for all unmatched routes
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
+// ====================== SOCKET.IO LOGIC ======================
 const usersMap = {};
+
 function getClientsInRoom(roomId) {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
     (socketId) => {
@@ -73,7 +85,7 @@ io.on("connection", (socket) => {
       focus,
     });
   });
-  
+
   socket.on("LANGUAGE_SYNC", ({ language, socketId }) => {
     io.to(socketId).emit("LANGUAGE_SYNC", { language });
   });
@@ -123,5 +135,6 @@ io.on("connection", (socket) => {
   });
 });
 
+// ✅ Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
