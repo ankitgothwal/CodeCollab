@@ -1,6 +1,9 @@
 import { io } from "socket.io-client";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : window.location.origin; // ✅ Automatically picks the correct domain
 
 export const initSocket = async () => {
   const options = {
